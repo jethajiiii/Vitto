@@ -5,7 +5,7 @@ const { getLoan } = require('@/lib/services/loanService.js');
 
 // GET /api/loans/[id]
 // Returns the loan schedule and current position.
-const GET = handle(async (request, { params }) => {
+export const GET = handle(async (request, { params }) => {
   await requireAuth(request);
   const { id } = await params; // Next.js 16 params is a Promise
 
@@ -19,5 +19,3 @@ const GET = handle(async (request, { params }) => {
   const loanView = await getLoan(id, asOf);
   return ok(loanView);
 });
-
-module.exports = { GET };

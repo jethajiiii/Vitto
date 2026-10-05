@@ -5,7 +5,7 @@ const { recordPayment } = require('@/lib/services/paymentService.js');
 
 // POST /api/loans/[id]/payments
 // Records a payment against the loan's installment schedule.
-const POST = handle(async (request, { params }) => {
+export const POST = handle(async (request, { params }) => {
   await requireAuth(request);
 
   const { id } = await params; // Next.js 16: params is a Promise
@@ -26,5 +26,3 @@ const POST = handle(async (request, { params }) => {
   const status = result.payment.replayed ? 200 : 201;
   return ok(result, status);
 });
-
-module.exports = { POST };

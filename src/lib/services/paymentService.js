@@ -142,17 +142,31 @@ async function recordPayment(loanId, { amountPaise, paidOn, idempotencyKey }, as
   // Build the response AFTER the transaction closes so we read committed data
   const loanView = await getLoan(loanId, asOf);
 
+  let applied;
+  if (replayed) {
+    const storedAllocations = await db.paymentAllocation.findMany({
+      where: { paymentId: payment.id },
+      include: { installment: { select: { number: true } } },
+      orderBy: { installment: { number: 'asc' } },
+    });
+    applied = storedAllocations.map((pa) => ({
+      installment: pa.installment.number,
+      interest: (pa.interestPaise / 100).toFixed(2),
+      principal: (pa.principalPaise / 100).toFixed(2),
+    }));
+  } else {
+    applied = allocations.map((a) => ({
+      installment: a.number,
+      interest: (a.interestPaise / 100).toFixed(2),
+      principal: (a.principalPaise / 100).toFixed(2),
+    }));
+  }
+
   const paymentData = {
     id: payment.id,
     amount: (payment.amountPaise / 100).toFixed(2),
     date: toISODate(payment.paidOn),
-    applied: replayed
-      ? []
-      : allocations.map((a) => ({
-          installment: a.number,
-          interest: (a.interestPaise / 100).toFixed(2),
-          principal: (a.principalPaise / 100).toFixed(2),
-        })),
+    applied,
     replayed,
   };
 

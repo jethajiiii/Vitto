@@ -52,37 +52,40 @@ async function verifyTokenWithPublicKeys(token) {
   });
 }
 
-// ─── App singleton ────────────────────────────────────────────────────────────
-function getAdminApp() {
-  // getApps() returns [] when no app has been initialised yet
-  const existing = getApps();
-  if (existing.length > 0) return getApp();
-
+function parseServiceAccount() {
   const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
-  let serviceAccount = null;
-
-  if (serviceAccountJson) {
+  if (serviceAccountJson && serviceAccountJson.trim()) {
     try {
-      serviceAccount = JSON.parse(serviceAccountJson);
+      const parsed = JSON.parse(serviceAccountJson);
+      if (parsed?.private_key || parsed?.privateKey) {
+        return parsed;
+      }
     } catch {
-      // malformed JSON — fall back to public-cert verification
+      // malformed JSON — fall back to public cert verification
     }
-  } else if (process.env.FIREBASE_PRIVATE_KEY && process.env.FIREBASE_CLIENT_EMAIL) {
-    serviceAccount = {
+  }
+  if (process.env.FIREBASE_PRIVATE_KEY && process.env.FIREBASE_CLIENT_EMAIL) {
+    return {
       projectId: PROJECT_ID,
       clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
       privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
     };
   }
+  return null;
+}
 
-  if (serviceAccount?.private_key || serviceAccount?.privateKey) {
+// ─── App singleton ────────────────────────────────────────────────────────────
+function getAdminApp() {
+  const existing = getApps();
+  if (existing.length > 0) return getApp();
+
+  const serviceAccount = parseServiceAccount();
+  if (serviceAccount) {
     const key = serviceAccount.private_key || serviceAccount.privateKey;
     serviceAccount.private_key = key.replace(/\\n/g, '\n');
     return initializeApp({ credential: cert(serviceAccount), projectId: PROJECT_ID });
   }
 
-  // No private key available — initialise with projectId only.
-  // verifyIdToken will use public-cert fallback below.
   return initializeApp({ projectId: PROJECT_ID });
 }
 
@@ -94,16 +97,13 @@ function getAdminApp() {
  * and jsonwebtoken (no service account required).
  */
 function getAdminAuth() {
-  const hasCredential =
-    process.env.FIREBASE_SERVICE_ACCOUNT_JSON ||
-    (process.env.FIREBASE_PRIVATE_KEY && process.env.FIREBASE_CLIENT_EMAIL);
-
-  if (hasCredential) {
+  const serviceAccount = parseServiceAccount();
+  if (serviceAccount) {
     const app = getAdminApp();
     return getAuth(app);
   }
 
-  // No service-account private key — use public-cert JWT verification.
+  // No valid service-account private key — use public-cert JWT verification.
   return {
     verifyIdToken: verifyTokenWithPublicKeys,
   };

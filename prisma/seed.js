@@ -5,9 +5,12 @@ const dotenv = require('dotenv');
 dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
-const db = require('../src/lib/db.js');
-const { createLoan } = require('../src/lib/services/loanService.js');
-const { recordPayment } = require('../src/lib/services/paymentService.js');
+const dbRaw = require('../src/lib/db.js');
+const db = dbRaw.default || dbRaw;
+const loanServiceRaw = require('../src/lib/services/loanService.js');
+const { createLoan } = loanServiceRaw.default || loanServiceRaw;
+const paymentServiceRaw = require('../src/lib/services/paymentService.js');
+const { recordPayment } = paymentServiceRaw.default || paymentServiceRaw;
 
 function getTodayKolkata() {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(new Date());

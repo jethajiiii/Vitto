@@ -22,14 +22,47 @@ A production-ready loan repayment and servicing system built with Next.js 16 App
 
 ---
 
-## 2. Architecture, Database & Hosting
+## 2. System Architecture
 
-- **Framework**: Next.js 16 (App Router, Server Components & Route Handlers)
-- **Database**: PostgreSQL hosted on **Neon** (Serverless PostgreSQL with connection pooling)
-- **ORM**: Prisma Client (`@prisma/client` with pooled `DATABASE_URL` and direct `DIRECT_URL`)
-- **Hosting**: **Vercel** (Serverless Functions)
-- **Authentication**: Firebase Authentication (Client SDK + Server-side RS256 token verification using Google's public x509 certs)
-- **CI / CD**: GitHub Actions (`.github/workflows/ci.yml`) running migrations and full test suite on push/PR
+### High-Level Architecture Diagram
+
+```mermaid
+graph TD
+    subgraph Client ["Client Layer"]
+        UI["React 19 Dashboard / AuthGate UI"]
+    end
+
+    subgraph Vercel ["Vercel Serverless Runtime (Next.js 16 App Router)"]
+        Routes["API Route Handlers<br/>(<code>/api/loans</code>, <code>/api/loans/:id</code>, <code>/api/loans/:id/payments</code>)"]
+        AuthMW["<code>requireAuth</code> Middleware"]
+        JWTVerifier["Stateless RS256 JWT Verifier<br/>(Google Public x509 Certs Cache)"]
+        Domain["Domain Calculation & Servicing Layer<br/>(<code>loanService</code>, <code>paymentService</code>, <code>allocation</code>, <code>schedule</code>, <code>position</code>)"]
+        Prisma["Prisma ORM (<code>@prisma/client</code>)"]
+    end
+
+    subgraph Cloud ["Managed Cloud Infrastructure"]
+        Firebase["Firebase Auth (Identity Provider)"]
+        Neon["Neon PostgreSQL (Serverless + Connection Pooling)"]
+    end
+
+    UI -- "1. Sign In & Acquire Token" --> Firebase
+    UI -- "2. Authorized Requests (Bearer Token)" --> Routes
+    Routes --> AuthMW
+    AuthMW -- "Verify RS256 Signature" --> JWTVerifier
+    Routes --> Domain
+    Domain -- "Atomic Transactions (SELECT FOR UPDATE)" --> Prisma
+    Prisma --> Neon
+```
+
+### Architectural Highlights
+
+- **Stateless Serverless Auth**: Uses Google's public x509 certificates to verify Firebase ID tokens in Node.js serverless functions with zero external CJS dependencies.
+- **Strict Separation of Concerns**:
+  - **Transport Boundary**: `src/app/api/*` handles HTTP extraction, validation via `readJson`/`validate*`, and response formatting via `handle()` and `ok()`.
+  - **Domain Logic**: `src/lib/services/*` and pure computation modules (`allocation.js`, `schedule.js`, `position.js`, `money.js`) implement loan mathematics without HTTP dependencies.
+  - **Data Layer**: `src/lib/db.js` provides global connection pooling for Prisma Client with transaction-level row locks.
+- **Concurrency & Idempotency Guarantee**: Payment execution utilizes PostgreSQL row locks (`SELECT ... FOR UPDATE`) inside serializable transactions to prevent race conditions across parallel requests.
+
 
 ---
 

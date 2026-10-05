@@ -29,7 +29,8 @@ async function requireAuth(request) {
     // Server-side token verification — checks signature, expiry, and project ID
     const decoded = await getAdminAuth().verifyIdToken(token);
     return decoded;
-  } catch {
+  } catch (err) {
+    console.error('requireAuth token verification failed:', err.message || err);
     // Expired, malformed, or wrong-project tokens all map to the same 401
     throw new ApiError(401, 'UNAUTHENTICATED', AUTH_ERROR_MESSAGE);
   }

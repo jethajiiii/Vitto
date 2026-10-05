@@ -1,7 +1,7 @@
-const { handle, ok, ApiError } = require('@/lib/errors.js');
-const { requireAuth } = require('@/lib/requireAuth.js');
-const { readJson, validatePayment, validateAsOf, isUuid } = require('@/lib/validation.js');
-const { recordPayment } = require('@/lib/services/paymentService.js');
+import { handle, ok, ApiError } from '@/lib/errors.js';
+import { requireAuth } from '@/lib/requireAuth.js';
+import { readJson, validatePayment, validateAsOf, isUuid } from '@/lib/validation.js';
+import { recordPayment } from '@/lib/services/paymentService.js';
 
 // POST /api/loans/[id]/payments
 // Records a payment against the loan's installment schedule.

@@ -1,7 +1,7 @@
-const { handle, ok } = require('@/lib/errors.js');
-const { requireAuth } = require('@/lib/requireAuth.js');
-const { readJson, validateCreateLoan } = require('@/lib/validation.js');
-const { createLoan } = require('@/lib/services/loanService.js');
+import { handle, ok } from '@/lib/errors.js';
+import { requireAuth } from '@/lib/requireAuth.js';
+import { readJson, validateCreateLoan } from '@/lib/validation.js';
+import { createLoan } from '@/lib/services/loanService.js';
 
 // POST /api/loans
 // Creates a loan and its full installment schedule.

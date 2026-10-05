@@ -1,7 +1,7 @@
-const { handle, ok, ApiError } = require('@/lib/errors.js');
-const { requireAuth } = require('@/lib/requireAuth.js');
-const { validateAsOf, isUuid } = require('@/lib/validation.js');
-const { getLoan } = require('@/lib/services/loanService.js');
+import { handle, ok, ApiError } from '@/lib/errors.js';
+import { requireAuth } from '@/lib/requireAuth.js';
+import { validateAsOf, isUuid } from '@/lib/validation.js';
+import { getLoan } from '@/lib/services/loanService.js';
 
 // GET /api/loans/[id]
 // Returns the loan schedule and current position.

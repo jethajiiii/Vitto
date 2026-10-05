@@ -11,7 +11,7 @@ const MONTH_NAMES = {
  * @param {string|number} rupeeVal - e.g. "200000.00" or 9984.82
  * @returns {string} - e.g. "2,00,000.00"
  */
-function formatINR(rupeeVal) {
+export function formatINR(rupeeVal) {
   if (rupeeVal === null || rupeeVal === undefined || rupeeVal === '') {
     return '0.00';
   }
@@ -30,7 +30,7 @@ function formatINR(rupeeVal) {
  * @param {string} isoDate - e.g. "2026-07-15"
  * @returns {string} - e.g. "15 Jul 2026"
  */
-function formatDate(isoDate) {
+export function formatDate(isoDate) {
   if (typeof isoDate !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(isoDate)) {
     return isoDate || '';
   }
@@ -45,12 +45,6 @@ function formatDate(isoDate) {
  *
  * @returns {string} - e.g. "2026-10-05"
  */
-function todayIST() {
+export function todayIST() {
   return new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
 }
-
-module.exports = {
-  formatINR,
-  formatDate,
-  todayIST,
-};

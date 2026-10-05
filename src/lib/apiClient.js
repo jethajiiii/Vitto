@@ -1,9 +1,9 @@
-const { getClientAuth } = require('./firebaseClient.js');
+import { getClientAuth } from './firebaseClient.js';
 
 /**
  * Custom error class representing an API error response.
  */
-class ApiClientError extends Error {
+export class ApiClientError extends Error {
   constructor(status, code, message, details = null) {
     super(message);
     this.name = 'ApiClientError';
@@ -20,7 +20,7 @@ class ApiClientError extends Error {
  * @param {object} [options={}] - Fetch options (method, body, headers)
  * @returns {Promise<any>} - Unwrapped data property from API response
  */
-async function apiFetch(path, options = {}) {
+export async function apiFetch(path, options = {}) {
   const auth = getClientAuth();
   const currentUser = auth.currentUser;
 
@@ -82,5 +82,3 @@ async function apiFetch(path, options = {}) {
 
   return json.data;
 }
-
-module.exports = { apiFetch, ApiClientError };

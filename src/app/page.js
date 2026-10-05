@@ -1,11 +1,11 @@
 'use client';
 
-const { useState, useEffect } = require('react');
-const AuthGate = require('../components/AuthGate.js').default;
-const PositionSummary = require('../components/PositionSummary.js').default;
-const ScheduleTable = require('../components/ScheduleTable.js').default;
-const PaymentForm = require('../components/PaymentForm.js').default;
-const { apiFetch, ApiClientError } = require('../lib/apiClient.js');
+import { useState, useEffect } from 'react';
+import AuthGate from '../components/AuthGate.js';
+import PositionSummary from '../components/PositionSummary.js';
+import ScheduleTable from '../components/ScheduleTable.js';
+import PaymentForm from '../components/PaymentForm.js';
+import { apiFetch, ApiClientError } from '../lib/apiClient.js';
 
 const STORAGE_KEY = 'vitto_last_loan_id';
 

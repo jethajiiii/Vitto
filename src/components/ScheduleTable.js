@@ -1,6 +1,6 @@
 'use client';
 
-const { formatINR, formatDate } = require('../lib/format.js');
+import { formatINR, formatDate } from '../lib/format.js';
 
 export default function ScheduleTable({ schedule, touchedNumbers = [] }) {
   if (!schedule || schedule.length === 0) return null;

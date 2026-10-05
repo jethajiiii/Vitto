@@ -1,8 +1,8 @@
 'use client';
 
-const { useState, useEffect } = require('react');
-const { onAuthStateChanged, signInWithEmailAndPassword, signOut } = require('firebase/auth');
-const { getClientAuth } = require('../lib/firebaseClient.js');
+import { useState, useEffect } from 'react';
+import { onAuthStateChanged, signInWithEmailAndPassword, signOut } = 'firebase/auth';
+import { getClientAuth } from '../lib/firebaseClient.js';
 
 /**
  * Maps Firebase Auth error codes to friendly, safe user-facing error messages.

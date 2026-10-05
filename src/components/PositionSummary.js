@@ -1,6 +1,6 @@
 'use client';
 
-const { formatINR, formatDate } = require('../lib/format.js');
+import { formatINR, formatDate } from '../lib/format.js';
 
 export default function PositionSummary({ loan, position }) {
   if (!loan || !position) return null;

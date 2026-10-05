@@ -1,10 +1,10 @@
 'use client';
 
-const { useState } = require('react');
-const { signOut } = require('firebase/auth');
-const { getClientAuth } = require('../lib/firebaseClient.js');
-const { apiFetch, ApiClientError } = require('../lib/apiClient.js');
-const { todayIST, formatINR } = require('../lib/format.js');
+import { useState } from 'react';
+import { signOut } from 'firebase/auth';
+import { getClientAuth } from '../lib/firebaseClient.js';
+import { apiFetch, ApiClientError } from '../lib/apiClient.js';
+import { todayIST, formatINR } from '../lib/format.js';
 
 export default function PaymentForm({ loanId, disbursementDate, onPaymentSuccess }) {
   const [amount, setAmount] = useState('');

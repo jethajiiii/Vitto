@@ -1,5 +1,5 @@
-const { initializeApp, getApps, getApp } = require('firebase/app');
-const { getAuth } = require('firebase/auth');
+import { initializeApp, getApps, getApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -14,9 +14,7 @@ const firebaseConfig = {
  * Returns the Firebase Client Auth instance.
  * Guarded against duplicate initialization for Next.js hot reloading.
  */
-function getClientAuth() {
+export function getClientAuth() {
   const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
   return getAuth(app);
 }
-
-module.exports = { getClientAuth };

@@ -1,4 +1,4 @@
-const { ApiError } = require('./errors.js');
+import { ApiError } from './errors.js';
 
 /**
  * Allocates a payment amount across loan repayment installments.
@@ -14,7 +14,7 @@ const { ApiError } = require('./errors.js');
  * @param {Array<Object>} installments - Array of installment objects
  * @returns {{ allocations: Array<{ number: number, interestPaise: number, principalPaise: number }>, totalAppliedPaise: number }}
  */
-function allocate(amountPaise, installments) {
+export function allocate(amountPaise, installments) {
   if (
     typeof amountPaise !== 'number' ||
     !Number.isInteger(amountPaise) ||
@@ -99,7 +99,3 @@ function allocate(amountPaise, installments) {
     totalAppliedPaise: amountPaise - remainingToAllocate,
   };
 }
-
-module.exports = {
-  allocate,
-};

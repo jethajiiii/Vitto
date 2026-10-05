@@ -1,5 +1,5 @@
-const { ApiError } = require('./errors.js');
-const { isValidISODate } = require('./dates.js');
+import { ApiError } from './errors.js';
+import { isValidISODate } from './dates.js';
 
 /**
  * Computes the current financial position of a loan as of a specific date.
@@ -21,7 +21,7 @@ const { isValidISODate } = require('./dates.js');
  *   overdueInstallmentCount: number
  * }}
  */
-function computePosition(installments, asOf) {
+export function computePosition(installments, asOf) {
   if (!isValidISODate(asOf)) {
     throw new ApiError(400, 'VALIDATION_ERROR', `Invalid asOf date: ${asOf}`);
   }
@@ -85,7 +85,3 @@ function computePosition(installments, asOf) {
     overdueInstallmentCount,
   };
 }
-
-module.exports = {
-  computePosition,
-};

@@ -1,4 +1,4 @@
-const { ApiError } = require('./errors.js');
+import { ApiError } from './errors.js';
 
 /**
  * Converts a number or numeric string to integer paise without float multiplication.
@@ -6,7 +6,7 @@ const { ApiError } = require('./errors.js');
  * @param {number|string} input 
  * @returns {number} Integer paise
  */
-function toPaise(input) {
+export function toPaise(input) {
   if (input === null || input === undefined) {
     throw new ApiError(400, 'VALIDATION_ERROR', 'Amount is required');
   }
@@ -42,7 +42,7 @@ function toPaise(input) {
  * @param {number} paise 
  * @returns {string}
  */
-function toRupeesString(paise) {
+export function toRupeesString(paise) {
   if (typeof paise !== 'number' || !Number.isInteger(paise)) {
     throw new ApiError(400, 'VALIDATION_ERROR', 'Paise must be an integer');
   }
@@ -56,7 +56,7 @@ function toRupeesString(paise) {
  * @param {number} paise 
  * @returns {string}
  */
-function formatINR(paise) {
+export function formatINR(paise) {
   if (typeof paise !== 'number' || !Number.isInteger(paise)) {
     throw new ApiError(400, 'VALIDATION_ERROR', 'Paise must be an integer');
   }
@@ -68,9 +68,3 @@ function formatINR(paise) {
     maximumFractionDigits: 2,
   }).format(rupees);
 }
-
-module.exports = {
-  toPaise,
-  toRupeesString,
-  formatINR,
-};

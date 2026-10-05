@@ -1,5 +1,5 @@
-const { computePosition } = require('./position.js');
-const { toRupeesString } = require('./money.js');
+import { computePosition } from './position.js';
+import { toRupeesString } from './money.js';
 
 /**
  * Converts a JS Date (from Prisma DATE column) to a YYYY-MM-DD string using UTC
@@ -7,7 +7,7 @@ const { toRupeesString } = require('./money.js');
  * @param {Date|string} val
  * @returns {string}
  */
-function toISODate(val) {
+export function toISODate(val) {
   const d = val instanceof Date ? val : new Date(val);
   return d.toISOString().slice(0, 10);
 }
@@ -16,7 +16,7 @@ function toISODate(val) {
  * Formats a single installment row into the schedule entry shape.
  * Derives status relative to asOf.
  */
-function presentInstallment(inst, asOf) {
+export function presentInstallment(inst, asOf) {
   const principalDue = inst.principalDuePaise;
   const interestDue = inst.interestDuePaise;
   const principalPaid = inst.principalPaidPaise;
@@ -61,7 +61,7 @@ function presentInstallment(inst, asOf) {
  * @param {string} asOf - ISO date string YYYY-MM-DD
  * @returns {{ loan, schedule, position }}
  */
-function presentLoan(loanRow, installmentRows, asOf) {
+export function presentLoan(loanRow, installmentRows, asOf) {
   const schedule = installmentRows.map((inst) => presentInstallment(inst, asOf));
 
   // Build shape that computePosition expects (pure paise integers)
@@ -103,5 +103,3 @@ function presentLoan(loanRow, installmentRows, asOf) {
     },
   };
 }
-
-module.exports = { presentLoan, toISODate };

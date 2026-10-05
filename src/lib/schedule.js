@@ -1,5 +1,5 @@
-const { ApiError } = require('./errors.js');
-const { isValidISODate, addMonthsClamped } = require('./dates.js');
+import { ApiError } from './errors.js';
+import { isValidISODate, addMonthsClamped } from './dates.js';
 
 /**
  * Generates the full loan repayment schedule given loan parameters.
@@ -13,7 +13,7 @@ const { isValidISODate, addMonthsClamped } = require('./dates.js');
  * @param {string} params.disbursementDate - Disbursement date in YYYY-MM-DD format
  * @returns {{ emiPaise: number, installments: Array<{ number: number, dueDate: string, principalDuePaise: number, interestDuePaise: number, totalDuePaise: number }> }}
  */
-function generateSchedule({ principalPaise, annualRatePercent, tenureMonths, disbursementDate }) {
+export function generateSchedule({ principalPaise, annualRatePercent, tenureMonths, disbursementDate }) {
   if (
     typeof principalPaise !== 'number' ||
     !Number.isInteger(principalPaise) ||
@@ -85,7 +85,3 @@ function generateSchedule({ principalPaise, annualRatePercent, tenureMonths, dis
     installments,
   };
 }
-
-module.exports = {
-  generateSchedule,
-};

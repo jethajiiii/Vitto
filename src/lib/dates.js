@@ -1,4 +1,4 @@
-const { ApiError } = require('./errors.js');
+import { ApiError } from './errors.js';
 
 /**
  * Validates whether a string is a strict YYYY-MM-DD calendar date.
@@ -6,7 +6,7 @@ const { ApiError } = require('./errors.js');
  * @param {string} str 
  * @returns {boolean}
  */
-function isValidISODate(str) {
+export function isValidISODate(str) {
   if (typeof str !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(str)) {
     return false;
   }
@@ -27,7 +27,7 @@ function isValidISODate(str) {
  * @param {number} n - Number of months to add
  * @returns {string} - Clamped ISO date string "YYYY-MM-DD"
  */
-function addMonthsClamped(isoDate, n) {
+export function addMonthsClamped(isoDate, n) {
   if (!isValidISODate(isoDate)) {
     throw new ApiError(400, 'VALIDATION_ERROR', `Invalid ISO date: ${isoDate}`);
   }
@@ -50,8 +50,3 @@ function addMonthsClamped(isoDate, n) {
 
   return `${formattedYear}-${formattedMonth}-${formattedDay}`;
 }
-
-module.exports = {
-  isValidISODate,
-  addMonthsClamped,
-};

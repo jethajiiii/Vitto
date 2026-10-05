@@ -1,5 +1,1 @@
-const { generateSchedule } = require('./schedule.js');
-
-module.exports = {
-  generateSchedule,
-};
+export * from './schedule.js';

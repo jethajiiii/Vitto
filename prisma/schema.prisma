@@ -55,10 +55,10 @@ model Payment {
 }
 
 model PaymentAllocation {
-  id            String @id @default(uuid())
-  paymentId     String
-  installmentId String
-  interestPaise Int
+  id             String @id @default(uuid())
+  paymentId      String
+  installmentId  String
+  interestPaise  Int
   principalPaise Int
 
   payment     Payment     @relation(fields: [paymentId], references: [id], onDelete: Restrict)

@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  serverExternalPackages: ['firebase-admin', '@prisma/client'],
+  serverExternalPackages: ['@prisma/client'],
 };
 
 export default nextConfig;

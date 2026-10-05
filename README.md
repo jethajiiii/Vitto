@@ -7,7 +7,10 @@ A production-ready loan repayment and servicing system built with Next.js 16 App
 ## 1. Deployed Application & Seeded Loans
 
 - **Live URL**: [https://vitto-xi.vercel.app](https://vitto-xi.vercel.app)
-- **Authentication**: Sign in using your Firebase test account to access the repayment schedule, test live payment allocations, and inspect real-time position calculations.
+
+### Test Account Credentials
+- **Email**: `test@vitto.app`
+- **Password**: `12345678`
 
 ### Available Seeded Loans
 

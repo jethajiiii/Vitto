@@ -1,0 +1,56 @@
+// Prisma schema for Loan Repayment Service
+// Database: PostgreSQL (Neon / Supabase / local PostgreSQL)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Loan {
+  id               String       @id @default(uuid())
+  principal        Int          // Principal in paise (e.g. ₹2,00,000 = 20000000 paise)
+  annualRate       Float        @map("annual_rate") // Annual interest rate percentage (e.g. 18.0)
+  tenureMonths     Int          @map("tenure_months") // Tenure in months (3 to 36)
+  disbursementDate DateTime     @map("disbursement_date") @db.Date // Disbursement date
+  createdAt        DateTime     @default(now()) @map("created_at")
+  updatedAt        DateTime     @updatedAt @map("updated_at")
+
+  instalments      Instalment[]
+  payments         Payment[]
+
+  @@map("loans")
+}
+
+model Instalment {
+  id                 String   @id @default(uuid())
+  loanId             String   @map("loan_id")
+  instalmentNumber   Int      @map("instalment_number")
+  dueDate            DateTime @map("due_date") @db.Date
+  principalComponent Int      @map("principal_component") // Principal component in paise
+  interestComponent  Int      @map("interest_component")  // Interest component in paise
+  totalDue           Int      @map("total_due")           // Total due in paise
+  amountPaid         Int      @default(0) @map("amount_paid") // Amount paid so far in paise
+
+  loan Loan @relation(fields: [loanId], references: [id], onDelete: Cascade)
+
+  @@unique([loanId, instalmentNumber])
+  @@map("instalments")
+}
+
+model Payment {
+  id             String   @id @default(uuid())
+  loanId         String   @map("loan_id")
+  amount         Int      // Payment amount in paise (> 0)
+  paymentDate    DateTime @map("payment_date") @db.Date
+  idempotencyKey String   @map("idempotency_key")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  loan Loan @relation(fields: [loanId], references: [id], onDelete: Cascade)
+
+  @@unique([loanId, idempotencyKey])
+  @@map("payments")
+}

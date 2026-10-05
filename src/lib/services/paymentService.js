@@ -1,8 +1,8 @@
-const db = require('../db.js');
-const { allocate } = require('../allocation.js');
-const { toISODate } = require('../presenters.js');
-const { getLoan } = require('./loanService.js');
-const { ApiError } = require('../errors.js');
+import db from '../db.js';
+import { allocate } from '../allocation.js';
+import { toISODate } from '../presenters.js';
+import { getLoan } from './loanService.js';
+import { ApiError } from '../errors.js';
 
 /**
  * Records a payment against a loan inside a serialised transaction.
@@ -19,7 +19,7 @@ const { ApiError } = require('../errors.js');
  * @param {string} asOf - ISO date for the response view
  * @returns {{ payment, ...loanView, replayed: boolean }}
  */
-async function recordPayment(loanId, { amountPaise, paidOn, idempotencyKey }, asOf) {
+export async function recordPayment(loanId, { amountPaise, paidOn, idempotencyKey }, asOf) {
   let payment;
   let allocations;
   let replayed = false;
@@ -172,5 +172,3 @@ async function recordPayment(loanId, { amountPaise, paidOn, idempotencyKey }, as
 
   return { payment: paymentData, ...loanView };
 }
-
-module.exports = { recordPayment };

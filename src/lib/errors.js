@@ -1,4 +1,4 @@
-class ApiError extends Error {
+export class ApiError extends Error {
   constructor(status, code, message, details = null) {
     super(message);
     this.name = 'ApiError';
@@ -16,7 +16,7 @@ class ApiError extends Error {
  * @param {Error|ApiError} err
  * @returns {Response}
  */
-function errorResponse(err) {
+export function errorResponse(err) {
   if (err instanceof ApiError) {
     const body = {
       error: {
@@ -46,7 +46,7 @@ function errorResponse(err) {
  * @param {Function} fn - Async route handler (request, context) => Promise<Response>
  * @returns {Function}
  */
-function handle(fn) {
+export function handle(fn) {
   return async function wrappedHandler(request, context) {
     try {
       return await fn(request, context);
@@ -67,13 +67,6 @@ function handle(fn) {
  * @param {number} status
  * @returns {Response}
  */
-function ok(data, status = 200) {
+export function ok(data, status = 200) {
   return Response.json({ data }, { status });
 }
-
-module.exports = {
-  ApiError,
-  errorResponse,
-  handle,
-  ok,
-};

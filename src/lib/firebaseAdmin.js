@@ -6,9 +6,9 @@
  * does NOT exist. Always use getApps() and getAuth() from 'firebase-admin/auth'.
  */
 
-const { initializeApp, getApps, getApp, cert } = require('firebase-admin/app');
-const { getAuth } = require('firebase-admin/auth');
-const jwt = require('jsonwebtoken');
+import { initializeApp, getApps, getApp, cert } from 'firebase-admin/app';
+import { getAuth } from 'firebase-admin/auth';
+import jwt from 'jsonwebtoken';
 
 const PROJECT_ID =
   process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ||
@@ -96,7 +96,7 @@ function getAdminApp() {
  * built-in verifier; otherwise it verifies the token using Google's public certs
  * and jsonwebtoken (no service account required).
  */
-function getAdminAuth() {
+export function getAdminAuth() {
   const serviceAccount = parseServiceAccount();
   if (serviceAccount) {
     const app = getAdminApp();
@@ -108,6 +108,4 @@ function getAdminAuth() {
     verifyIdToken: verifyTokenWithPublicKeys,
   };
 }
-
-module.exports = { getAdminAuth };
 

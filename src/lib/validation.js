@@ -1,6 +1,6 @@
-const { ApiError } = require('./errors.js');
-const { toPaise } = require('./money.js');
-const { isValidISODate } = require('./dates.js');
+import { ApiError } from './errors.js';
+import { toPaise } from './money.js';
+import { isValidISODate } from './dates.js';
 
 /**
  * Safely reads and parses JSON from a Next.js Request object.
@@ -8,7 +8,7 @@ const { isValidISODate } = require('./dates.js');
  * @param {Request} request
  * @returns {Promise<any>}
  */
-async function readJson(request) {
+export async function readJson(request) {
   try {
     return await request.json();
   } catch {
@@ -21,7 +21,7 @@ async function readJson(request) {
  * @param {string} str
  * @returns {boolean}
  */
-function isUuid(str) {
+export function isUuid(str) {
   if (typeof str !== 'string') return false;
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
 }
@@ -33,7 +33,7 @@ function isUuid(str) {
  * @param {Object} body
  * @returns {{ principalPaise: number, annualRatePercent: number, tenureMonths: number, disbursementDate: string }}
  */
-function validateCreateLoan(body) {
+export function validateCreateLoan(body) {
   if (!body || typeof body !== 'object' || Array.isArray(body)) {
     throw new ApiError(400, 'VALIDATION_ERROR', 'Request body must be a JSON object');
   }
@@ -149,7 +149,7 @@ function validateCreateLoan(body) {
  * @param {Headers|Object} headers
  * @returns {{ amountPaise: number, paidOn: string, idempotencyKey: string }}
  */
-function validatePayment(body, headers) {
+export function validatePayment(body, headers) {
   if (!body || typeof body !== 'object' || Array.isArray(body)) {
     throw new ApiError(400, 'VALIDATION_ERROR', 'Request body must be a JSON object');
   }
@@ -226,7 +226,7 @@ function validatePayment(body, headers) {
  * @param {URLSearchParams|Object} searchParams
  * @returns {string} - YYYY-MM-DD ISO date string
  */
-function validateAsOf(searchParams) {
+export function validateAsOf(searchParams) {
   const asOfParam = searchParams && typeof searchParams.get === 'function'
     ? searchParams.get('asOf')
     : (searchParams && searchParams.asOf);
@@ -241,11 +241,3 @@ function validateAsOf(searchParams) {
   // Default to today in Asia/Kolkata timezone
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(new Date());
 }
-
-module.exports = {
-  readJson,
-  isUuid,
-  validateCreateLoan,
-  validatePayment,
-  validateAsOf,
-};

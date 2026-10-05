@@ -1,8 +1,8 @@
-const db = require('../db.js');
-const { generateSchedule } = require('../schedule.js');
-const { isUuid } = require('../validation.js');
-const { presentLoan, toISODate } = require('../presenters.js');
-const { ApiError } = require('../errors.js');
+import db from '../db.js';
+import { generateSchedule } from '../schedule.js';
+import { isUuid } from '../validation.js';
+import { presentLoan, toISODate } from '../presenters.js';
+import { ApiError } from '../errors.js';
 
 /**
  * Creates a loan and its full installment schedule in one transaction.
@@ -11,7 +11,7 @@ const { ApiError } = require('../errors.js');
  * @param {{ principalPaise, annualRatePercent, tenureMonths, disbursementDate }} validated
  * @returns {Object} Full loan view (same shape as getLoan)
  */
-async function createLoan({ principalPaise, annualRatePercent, tenureMonths, disbursementDate }) {
+export async function createLoan({ principalPaise, annualRatePercent, tenureMonths, disbursementDate }) {
   const schedule = generateSchedule({
     principalPaise,
     annualRatePercent,
@@ -58,7 +58,7 @@ async function createLoan({ principalPaise, annualRatePercent, tenureMonths, dis
  * @param {string} asOf - ISO date string YYYY-MM-DD
  * @returns {Object} presentLoan output
  */
-async function getLoan(id, asOf) {
+export async function getLoan(id, asOf) {
   if (!isUuid(id)) {
     throw new ApiError(404, 'LOAN_NOT_FOUND', `Loan ${id} not found`);
   }
@@ -75,5 +75,3 @@ async function getLoan(id, asOf) {
 
   return presentLoan(loan, installments, asOf);
 }
-
-module.exports = { createLoan, getLoan };

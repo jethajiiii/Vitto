@@ -1,3 +1,2 @@
-const prisma = require('./db');
-
-module.exports = prisma;
+import prisma from './db.js';
+export default prisma;

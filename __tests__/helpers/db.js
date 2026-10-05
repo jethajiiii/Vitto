@@ -1,4 +1,5 @@
-const db = require('../../src/lib/db.js');
+const dbRaw = require('../../src/lib/db.js');
+const db = dbRaw.default || dbRaw;
 
 async function resetDb() {
   if (process.env.TEST_DB !== '1') {

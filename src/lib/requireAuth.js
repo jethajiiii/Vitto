@@ -1,5 +1,5 @@
-const { ApiError } = require('./errors.js');
-const { getAdminAuth } = require('./firebaseAdmin.js');
+import { ApiError } from './errors.js';
+import { getAdminAuth } from './firebaseAdmin.js';
 
 // Single generic message for all auth failures to avoid revealing which part failed
 const AUTH_ERROR_MESSAGE = 'Authentication required';
@@ -12,7 +12,7 @@ const AUTH_ERROR_MESSAGE = 'Authentication required';
  * @returns {Promise<admin.auth.DecodedIdToken>} - Decoded Firebase token
  * @throws {ApiError} 401 UNAUTHENTICATED for any auth failure
  */
-async function requireAuth(request) {
+export async function requireAuth(request) {
   const authHeader = request.headers.get('authorization');
 
   // Reject missing header, wrong scheme, or empty token
@@ -35,7 +35,3 @@ async function requireAuth(request) {
     throw new ApiError(401, 'UNAUTHENTICATED', AUTH_ERROR_MESSAGE);
   }
 }
-
-module.exports = {
-  requireAuth,
-};

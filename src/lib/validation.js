@@ -166,12 +166,12 @@ function validatePayment(body, headers) {
     try {
       amountPaise = toPaise(body.amount);
       if (amountPaise <= 0) {
-        details.push({ field: 'amount', message: 'Payment amount must be greater than 0' });
+        details.push({ field: 'amount', message: 'Amount must be a positive number with at most 2 decimals' });
       }
     } catch (err) {
       details.push({
         field: 'amount',
-        message: err.message || 'Payment amount must be a valid number with at most 2 decimal places',
+        message: 'Amount must be a positive number with at most 2 decimals',
       });
     }
   }

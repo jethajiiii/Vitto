@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { onAuthStateChanged, signInWithEmailAndPassword, signOut } = 'firebase/auth';
+import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { getClientAuth } from '../lib/firebaseClient.js';
 
 /**

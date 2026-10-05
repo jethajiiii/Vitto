@@ -1,56 +1,66 @@
 // Prisma schema for Loan Repayment Service
-// Database: PostgreSQL (Neon / Supabase / local PostgreSQL)
+// Database: PostgreSQL (Neon)
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Loan {
-  id               String       @id @default(uuid())
-  principal        Int          // Principal in paise (e.g. ₹2,00,000 = 20000000 paise)
-  annualRate       Float        @map("annual_rate") // Annual interest rate percentage (e.g. 18.0)
-  tenureMonths     Int          @map("tenure_months") // Tenure in months (3 to 36)
-  disbursementDate DateTime     @map("disbursement_date") @db.Date // Disbursement date
-  createdAt        DateTime     @default(now()) @map("created_at")
-  updatedAt        DateTime     @updatedAt @map("updated_at")
+  id                String   @id @default(uuid())
+  principalPaise    Int
+  annualRatePercent Decimal  @db.Decimal(5, 2)
+  tenureMonths      Int
+  disbursementDate  DateTime @db.Date
+  emiPaise          Int
+  createdAt         DateTime @default(now())
 
-  instalments      Instalment[]
-  payments         Payment[]
-
-  @@map("loans")
+  installments Installment[]
+  payments     Payment[]
 }
 
-model Instalment {
+model Installment {
   id                 String   @id @default(uuid())
-  loanId             String   @map("loan_id")
-  instalmentNumber   Int      @map("instalment_number")
-  dueDate            DateTime @map("due_date") @db.Date
-  principalComponent Int      @map("principal_component") // Principal component in paise
-  interestComponent  Int      @map("interest_component")  // Interest component in paise
-  totalDue           Int      @map("total_due")           // Total due in paise
-  amountPaid         Int      @default(0) @map("amount_paid") // Amount paid so far in paise
+  loanId             String
+  number             Int
+  dueDate            DateTime @db.Date
+  principalDuePaise  Int
+  interestDuePaise   Int
+  principalPaidPaise Int      @default(0)
+  interestPaidPaise  Int      @default(0)
 
-  loan Loan @relation(fields: [loanId], references: [id], onDelete: Cascade)
+  loan        Loan                @relation(fields: [loanId], references: [id], onDelete: Restrict)
+  allocations PaymentAllocation[]
 
-  @@unique([loanId, instalmentNumber])
-  @@map("instalments")
+  @@unique([loanId, number])
 }
 
 model Payment {
   id             String   @id @default(uuid())
-  loanId         String   @map("loan_id")
-  amount         Int      // Payment amount in paise (> 0)
-  paymentDate    DateTime @map("payment_date") @db.Date
-  idempotencyKey String   @map("idempotency_key")
-  createdAt      DateTime @default(now()) @map("created_at")
+  loanId         String
+  amountPaise    Int
+  paidOn         DateTime @db.Date
+  idempotencyKey String
+  createdAt      DateTime @default(now())
 
-  loan Loan @relation(fields: [loanId], references: [id], onDelete: Cascade)
+  loan        Loan                @relation(fields: [loanId], references: [id], onDelete: Restrict)
+  allocations PaymentAllocation[]
 
   @@unique([loanId, idempotencyKey])
-  @@map("payments")
+}
+
+model PaymentAllocation {
+  id            String @id @default(uuid())
+  paymentId     String
+  installmentId String
+  interestPaise Int
+  principalPaise Int
+
+  payment     Payment     @relation(fields: [paymentId], references: [id], onDelete: Restrict)
+  installment Installment @relation(fields: [installmentId], references: [id], onDelete: Restrict)
 }

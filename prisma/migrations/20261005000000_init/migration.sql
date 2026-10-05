@@ -1,59 +1,74 @@
 -- CreateTable
-CREATE TABLE "loans" (
+CREATE TABLE "Loan" (
     "id" TEXT NOT NULL,
-    "principal" INTEGER NOT NULL,
-    "annual_rate" DOUBLE PRECISION NOT NULL,
-    "tenure_months" INTEGER NOT NULL,
-    "disbursement_date" DATE NOT NULL,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
+    "principalPaise" INTEGER NOT NULL,
+    "annualRatePercent" DECIMAL(5,2) NOT NULL,
+    "tenureMonths" INTEGER NOT NULL,
+    "disbursementDate" DATE NOT NULL,
+    "emiPaise" INTEGER NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "loans_pkey" PRIMARY KEY ("id"),
-    CONSTRAINT "loans_principal_positive" CHECK ("principal" > 0),
-    CONSTRAINT "loans_annual_rate_positive" CHECK ("annual_rate" > 0),
-    CONSTRAINT "loans_tenure_months_positive" CHECK ("tenure_months" > 0)
+    CONSTRAINT "Loan_pkey" PRIMARY KEY ("id"),
+    CONSTRAINT "Loan_principalPaise_positive" CHECK ("principalPaise" > 0),
+    CONSTRAINT "Loan_tenureMonths_valid" CHECK ("tenureMonths" >= 3 AND "tenureMonths" <= 36)
 );
 
 -- CreateTable
-CREATE TABLE "instalments" (
+CREATE TABLE "Installment" (
     "id" TEXT NOT NULL,
-    "loan_id" TEXT NOT NULL,
-    "instalment_number" INTEGER NOT NULL,
-    "due_date" DATE NOT NULL,
-    "principal_component" INTEGER NOT NULL,
-    "interest_component" INTEGER NOT NULL,
-    "total_due" INTEGER NOT NULL,
-    "amount_paid" INTEGER NOT NULL DEFAULT 0,
+    "loanId" TEXT NOT NULL,
+    "number" INTEGER NOT NULL,
+    "dueDate" DATE NOT NULL,
+    "principalDuePaise" INTEGER NOT NULL,
+    "interestDuePaise" INTEGER NOT NULL,
+    "principalPaidPaise" INTEGER NOT NULL DEFAULT 0,
+    "interestPaidPaise" INTEGER NOT NULL DEFAULT 0,
 
-    CONSTRAINT "instalments_pkey" PRIMARY KEY ("id"),
-    CONSTRAINT "instalments_principal_component_non_negative" CHECK ("principal_component" >= 0),
-    CONSTRAINT "instalments_interest_component_non_negative" CHECK ("interest_component" >= 0),
-    CONSTRAINT "instalments_total_due_non_negative" CHECK ("total_due" >= 0),
-    CONSTRAINT "instalments_amount_paid_non_negative" CHECK ("amount_paid" >= 0),
-    CONSTRAINT "instalments_amount_paid_le_total_due" CHECK ("amount_paid" <= "total_due")
+    CONSTRAINT "Installment_pkey" PRIMARY KEY ("id"),
+    CONSTRAINT "Installment_principalPaid_valid" CHECK ("principalPaidPaise" >= 0 AND "principalPaidPaise" <= "principalDuePaise"),
+    CONSTRAINT "Installment_interestPaid_valid" CHECK ("interestPaidPaise" >= 0 AND "interestPaidPaise" <= "interestDuePaise")
 );
 
 -- CreateTable
-CREATE TABLE "payments" (
+CREATE TABLE "Payment" (
     "id" TEXT NOT NULL,
-    "loan_id" TEXT NOT NULL,
-    "amount" INTEGER NOT NULL,
-    "payment_date" DATE NOT NULL,
-    "idempotency_key" TEXT NOT NULL,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "loanId" TEXT NOT NULL,
+    "amountPaise" INTEGER NOT NULL,
+    "paidOn" DATE NOT NULL,
+    "idempotencyKey" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "payments_pkey" PRIMARY KEY ("id"),
-    CONSTRAINT "payments_amount_positive" CHECK ("amount" > 0)
+    CONSTRAINT "Payment_pkey" PRIMARY KEY ("id"),
+    CONSTRAINT "Payment_amountPaise_positive" CHECK ("amountPaise" > 0)
+);
+
+-- CreateTable
+CREATE TABLE "PaymentAllocation" (
+    "id" TEXT NOT NULL,
+    "paymentId" TEXT NOT NULL,
+    "installmentId" TEXT NOT NULL,
+    "interestPaise" INTEGER NOT NULL,
+    "principalPaise" INTEGER NOT NULL,
+
+    CONSTRAINT "PaymentAllocation_pkey" PRIMARY KEY ("id"),
+    CONSTRAINT "PaymentAllocation_interestPaise_non_negative" CHECK ("interestPaise" >= 0),
+    CONSTRAINT "PaymentAllocation_principalPaise_non_negative" CHECK ("principalPaise" >= 0)
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "instalments_loan_id_instalment_number_key" ON "instalments"("loan_id", "instalment_number");
+CREATE UNIQUE INDEX "Installment_loanId_number_key" ON "Installment"("loanId", "number");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "payments_loan_id_idempotency_key_key" ON "payments"("loan_id", "idempotency_key");
+CREATE UNIQUE INDEX "Payment_loanId_idempotencyKey_key" ON "Payment"("loanId", "idempotencyKey");
 
 -- AddForeignKey
-ALTER TABLE "instalments" ADD CONSTRAINT "instalments_loan_id_fkey" FOREIGN KEY ("loan_id") REFERENCES "loans"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Installment" ADD CONSTRAINT "Installment_loanId_fkey" FOREIGN KEY ("loanId") REFERENCES "Loan"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "payments" ADD CONSTRAINT "payments_loan_id_fkey" FOREIGN KEY ("loan_id") REFERENCES "loans"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Payment" ADD CONSTRAINT "Payment_loanId_fkey" FOREIGN KEY ("loanId") REFERENCES "Loan"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "PaymentAllocation" ADD CONSTRAINT "PaymentAllocation_paymentId_fkey" FOREIGN KEY ("paymentId") REFERENCES "Payment"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "PaymentAllocation" ADD CONSTRAINT "PaymentAllocation_installmentId_fkey" FOREIGN KEY ("installmentId") REFERENCES "Installment"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -76,8 +76,19 @@ export default function AuthGate({ children }) {
     return (
       <div className="auth-container">
         <div className="auth-card">
-          <h1 className="auth-title">Sign in to Vitto</h1>
-          <p className="auth-subtitle">Loan Servicing Dashboard</p>
+          <div className="auth-logo-wrapper">
+            <div className="logo-badge">
+              <svg className="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <div>
+              <h1 className="auth-title">Vitto</h1>
+              <p className="auth-subtitle">Loan Servicing Platform</p>
+            </div>
+          </div>
 
           {authError && <div className="error-banner">{authError}</div>}
 
@@ -121,8 +132,17 @@ export default function AuthGate({ children }) {
     <div className="app-layout">
       <header className="app-header">
         <div className="header-brand">
-          <span className="brand-logo">Vitto</span>
-          <span className="brand-tag">Loan Servicing</span>
+          <div className="logo-badge logo-badge-sm">
+            <svg className="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+          <div className="brand-text">
+            <span className="brand-logo">Vitto</span>
+            <span className="brand-tag">Loan Servicing</span>
+          </div>
         </div>
         <div className="header-user">
           <span className="user-email">{user.email || 'Operator'}</span>

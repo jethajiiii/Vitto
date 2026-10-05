@@ -1,1 +1,1 @@
-module.exports = require('./firebaseAdmin.js');
+export * from './firebaseAdmin.js';
